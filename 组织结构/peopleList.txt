@@ -1,7 +1,0 @@
-SE	徐永金 		xu.java@gmail.com
-SE	陈赟		cyahjl@gmail.com
-SE	黄文健		hwj244231927@gmail.com
-
-QA	龚爱生		gongaisheng@gmail.com
-QA	孙青		bluedg85@gmail.com
-QA	王珠芝		spiderking36@gmail.com
