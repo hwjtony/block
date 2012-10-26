@@ -72,7 +72,7 @@ bool BoardLayer::init()
     // add the label as a child to this layer
     this->addChild(pLabel, 1);
     board* b = new board();
-    b->gameScene = this;
+    b->boardLayer = this;
     b->_resourceBar1 = resourceBar1;
     b->_resourceBar2 = resourceBar2;
     b->_resourceBar3 = resourceBar3;
@@ -84,8 +84,14 @@ bool BoardLayer::init()
         CCSprite* sprite = card->getSprite();
         this->addChild(sprite, 0);
     }
+    float interval = 5.0f;
+    this->schedule(schedule_selector(BoardLayer::addRow),interval);
     CCLog("init ended");
     return true;
+}
+
+void BoardLayer::addRow(){
+    share_board->addRow();
 }
 
 

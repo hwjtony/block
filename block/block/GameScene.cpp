@@ -15,6 +15,10 @@ GameScene::~GameScene(){
 }
 
 bool GameScene::init(){
+    if ( !CCLayer::init() )
+    {
+        return false;
+    }
     bool bRet = false;
     do {
         CCMenuItemImage *pCloseItem = CCMenuItemImage::create(
@@ -28,11 +32,15 @@ bool GameScene::init(){
         CCMenu* pMenu = CCMenu::create(pCloseItem, NULL);
         pMenu->setPosition( CCPointZero );
         this->addChild(pMenu, 1);
-        float interval = 1.0f;
-        this->schedule(schedule_selector(GameScene::addRow),interval);
+        this->schedule(schedule_selector(GameScene::update));
         bRet = true;
     } while (0);
     return bRet;
+}
+
+void GameScene::update(cocos2d::CCTime dt){
+    share_boardLayer->share_board->dropLogic();
+    CCLog("update");
 }
 
 CCScene* GameScene::scene() {
@@ -56,9 +64,7 @@ CCScene* GameScene::scene() {
     return pScene;
 }
 
-void GameScene::addRow(){
-    this->share_boardLayer->share_board->addRow();
-}
+
 
 void GameScene::menuCloseCallback(CCObject* pSender)
 {

@@ -28,7 +28,8 @@ public:
     
     int column;
     int row;
-    CCLayer* gameScene;
+    int addCompleteFlag=1;
+    CCLayer* boardLayer;
     ResourceBar* _resourceBar1;//绿
     ResourceBar* _resourceBar2;//红
     ResourceBar* _resourceBar3;//黄
@@ -43,7 +44,9 @@ public:
     void doRemove(Card* card);
     void renewCard();
     void addRow();
+    void addComplete();
     int getColumnTop(int column);
+    void dropLogic();
 };
 
 #endif /* defined(__block__board__) */

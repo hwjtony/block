@@ -369,13 +369,12 @@ void CCActionManager::update(float dt)
                 if (m_pCurrentTarget->currentAction->isDone())
                 {
                     m_pCurrentTarget->currentAction->stop();
-
+                    CCLog("done");
                     CCAction *pAction = m_pCurrentTarget->currentAction;
                     // Make currentAction nil to prevent removeAction from salvaging it.
                     m_pCurrentTarget->currentAction = NULL;
                     removeAction(pAction);
                 }
-
                 m_pCurrentTarget->currentAction = NULL;
             }
         }

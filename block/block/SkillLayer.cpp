@@ -24,7 +24,7 @@ bool SkillLayer::init(){
         return false;
     }
     CCSize screenSize = CCDirector::sharedDirector()->getWinSize();
-    CCSprite* skillframe = CCSprite::create("Icon-small-50.png");
+    CCSprite* skillframe = CCSprite::spriteWithFile("Icon-Small-50.png");
     skillframe->setPosition(ccp(20, screenSize.width/2));
     this->addChild(skillframe,-1,TypeUnRock);
     
@@ -46,12 +46,14 @@ void SkillLayer::ccTouchesEnded(CCSet* touches, CCEvent* event){
     if (isTouchHandeled) {
         this->consumeResource(TypeUnRock);
         CCNode* node = this->getChildByTag(TypeUnRock);
+        CCSprite* sprite = (CCSprite*) node;
+        //this->share_board->boardLayer->resumeSchedulerAndActions();
         //node->setVisible(false);
     }
 }
 
 //根据技能类型获得所需的资源（三位分别代表：绿红黄）
-int getConsumeByType(int skill_type){
+int SkillLayer::getConsumeByType(int skill_type){
     switch (skill_type) {
         case 1:
             return 111;
@@ -79,7 +81,7 @@ int getConsumeByType(int skill_type){
 }
 
 void SkillLayer::consumeResource(Type t){
-    int res = getConsumeByType(t);
+    int res = this->getConsumeByType(t);
     this->share_board->_resourceBar1->consumeResource(res/100);
     this->share_board->_resourceBar2->consumeResource(res/10-(res/100)*10);
     this->share_board->_resourceBar3->consumeResource(res-(res/10)*10);

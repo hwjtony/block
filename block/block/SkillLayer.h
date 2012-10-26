@@ -38,6 +38,7 @@ public:
     void ccTouchesEnded(cocos2d::CCSet* touches,cocos2d::CCEvent* event);
     board* share_board;
     void consumeResource(Type t);
+    int getConsumeByType(int skill_type);
 };
 
 #endif /* defined(__block__SkillLayer__) */

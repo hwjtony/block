@@ -41,7 +41,7 @@ public:
     SkillLayer* share_skillLayer;
     void setBoardLayer(BoardLayer* boardLayer);
     void setSkillLayer(SkillLayer* skillLayer);
-    void addRow();
+    void update(cocos2d::CCTime dt);
 };
 
 #endif // __HELLOWORLD_SCENE_H__

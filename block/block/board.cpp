@@ -35,6 +35,7 @@ CCArray* board::initBoard(){
             float spriteW = sprite->getContentSize().width;
             float spriteH = sprite->getContentSize().height;
             sprite->setPosition(ccp(winSize.width/2-column*spriteW/2+x*spriteW+spriteW/2,y*spriteH+spriteH/2));
+            card->position_y = (sprite->getPosition()).y;
             //sprites->addObject(sprite);
             cards->addObject(card);
         }
@@ -44,8 +45,10 @@ CCArray* board::initBoard(){
 }
 
 void board::addRow(){
+    this->addCompleteFlag = 0;
     CCDirector* director = CCDirector::sharedDirector();
     CCSize winSize = director->getWinSize();
+    float interval = 1.0f;
     for (int x = 0; x < column; x++) {
         //CCSprite* sprite = CCSprite::create("Icon-Small-50.png");
         //CCSprite* sprite = CCSprite::createWithTexture(m_cache[0]);
@@ -54,14 +57,40 @@ void board::addRow(){
         CCSprite* sprite = card->getSprite();
         float spriteW = sprite->getContentSize().width;
         float spriteH = sprite->getContentSize().height;
-        sprite->setPosition(ccp(winSize.width/2-column*spriteW/2+x*spriteW+spriteW/2,this->columnTops[x]*spriteH+spriteH/2));
+        int point_x = winSize.width/2-column*spriteW/2+x*spriteW+spriteW/2;
+        
+        sprite->setPosition(ccp(point_x,winSize.height+spriteH/2));
+        card->position_y = this->columnTops[x]*spriteH+spriteH/2;
+        //CCActionInterval* moveTo = CCMoveTo::create(interval, CCPointMake(point_x, this->columnTops[x]*spriteH+spriteH/2));
+        //sprite->runAction(moveTo);
+        //CCDirector::sharedDirector()->getActionManager()->addAction(moveTo, sprite, true);
+        
+        //CCCallFunc *callSelectorAction = CCCallFunc::actionWithTarget(this,callfunc_selector(board::addComplete));
+        //sprite->runAction(CCSequence::actions(moveTo,callSelectorAction,NULL));
+        //sprite->setPosition(ccp(winSize.width/2-column*spriteW/2+x*spriteW+spriteW/2,this->columnTops[x]*spriteH+spriteH/2));
         //sprites->addObject(sprite);
         columnTops[x]++;
         cards->addObject(card);
-        gameScene->addChild(sprite,0);
+        boardLayer->addChild(sprite,0);
     }
     this->row++;
     CCLog("%d",this->cards->count());
+}
+
+void board::dropLogic(){
+    for (int i = 0; i < cards->count(); i++) {
+        Card* card = (Card*)cards->objectAtIndex(i);
+        CCPoint pos = card->getSprite()->getPosition();
+        if (pos.y>card->position_y) {
+            //CCLog("pointy%d cardy%d",point.y,card->position_y);
+            pos.y-=5;
+            (card->getSprite())->setPosition(pos);
+        }
+    }
+}
+
+void board::addComplete(){
+    this->addCompleteFlag = 1;
 }
 
 int board::getColumnTop(int col){
@@ -133,7 +162,7 @@ void board::doRemove(Card* card){
         _resourceBar3->addResource();
     }
     CCParticleSystem* m_emitter = new CCParticleSystemQuad();
-    gameScene->addChild(m_emitter, 10);
+    boardLayer->addChild(m_emitter, 10);
     m_emitter->initWithFile("ExplodingRing.plist");
     m_emitter->setVisible(true);
     m_emitter->setPosition(card->getSprite()->getPosition());
@@ -154,27 +183,35 @@ void board::removeCard(){
         int card_num = abs((lastIndex-targetIndex)/column)-1;
         for (int i = 0; i < card_num; i++) {//the cards between
             int index = MIN(lastIndex, targetIndex)+(i+1)*column;
-            CCActionInterval* moveBy = CCMoveBy::create(interval, CCPointMake(0, -size.height));
-            ((Card*)cards->objectAtIndex(index))->getSprite()->runAction(moveBy);
+            ((Card*)cards->objectAtIndex(index))->position_y -= size.height;
+            //CCActionInterval* moveBy = CCMoveBy::create(interval, CCPointMake(0, -size.height));
+            //((Card*)cards->objectAtIndex(index))->getSprite()->runAction(moveBy);
+            //CCDirector::sharedDirector()->getActionManager()->addAction(moveBy, ((Card*)cards->objectAtIndex(index))->getSprite(), true);
             CCLog("run");
         }
         int up_index = MAX(lastIndex, targetIndex);
         for (int i = up_index+column; i<cards->count(); i+=column) {
             int index = i;
-            CCActionInterval* moveBy = CCMoveBy::create(interval, CCPointMake(0, -2*size.height));
-            ((Card*)cards->objectAtIndex(index))->getSprite()->runAction(moveBy);
+            ((Card*)cards->objectAtIndex(index))->position_y -= 2*size.height;
+            //CCActionInterval* moveBy = CCMoveBy::create(interval, CCPointMake(0, -2*size.height));
+            //((Card*)cards->objectAtIndex(index))->getSprite()->runAction(moveBy);
+            //CCDirector::sharedDirector()->getActionManager()->addAction(moveBy, ((Card*)cards->objectAtIndex(index))->getSprite(), true);
         }
         this->columnTops[lastIndex%column]-=2;
     }else{//in the different column
         for (int i = lastIndex+column; i<cards->count(); i+=column) {
             int index = i;
-            CCActionInterval* moveBy = CCMoveBy::create(interval, CCPointMake(0, -size.height));
-            ((Card*)cards->objectAtIndex(index))->getSprite()->runAction(moveBy);
+            ((Card*)cards->objectAtIndex(index))->position_y -= size.height;
+            //CCActionInterval* moveBy = CCMoveBy::create(interval, CCPointMake(0, -size.height));
+            //((Card*)cards->objectAtIndex(index))->getSprite()->runAction(moveBy);
+            //CCDirector::sharedDirector()->getActionManager()->addAction(moveBy, ((Card*)cards->objectAtIndex(index))->getSprite(), true);
         }
         for (int i = targetIndex+column; i<cards->count(); i+=column) {
             int index = i;
-            CCActionInterval* moveBy = CCMoveBy::create(interval, CCPointMake(0, -size.height));
-            ((Card*)cards->objectAtIndex(index))->getSprite()->runAction(moveBy);
+            ((Card*)cards->objectAtIndex(index))->position_y -= size.height;
+            //CCActionInterval* moveBy = CCMoveBy::create(interval, CCPointMake(0, -size.height));
+            //((Card*)cards->objectAtIndex(index))->getSprite()->runAction(moveBy);
+            //CCDirector::sharedDirector()->getActionManager()->addAction(moveBy, ((Card*)cards->objectAtIndex(index))->getSprite(), true);
         }
         this->columnTops[targetIndex%column]-=1;
         this->columnTops[lastIndex%column]-=1;
@@ -184,7 +221,7 @@ void board::removeCard(){
     
     
     this->lastClickedCard = NULL;
-    this->gameScene->setTouchEnabled(true);
+    this->boardLayer->setTouchEnabled(true);
     //_resourceBar1->resource_count++;
 }
 
@@ -192,7 +229,7 @@ void board::renewCard(){
     this->lastClickedCard->getSprite()->setTexture(m_cache[lastClickedCard->getColor()]);
     this->targetCard->getSprite()->setTexture(m_cache[targetCard->getColor()]);
     this->lastClickedCard = NULL;
-    this->gameScene->setTouchEnabled(true);
+    this->boardLayer->setTouchEnabled(true);
 }
 
 
@@ -201,20 +238,21 @@ void board::deblockLogic(Card *lastClickedCard, Card *targetCard){
     this->targetCard = targetCard;
     CCDelayTime *delayAction = CCDelayTime::actionWithDuration(1.0f);
     if (lastClickedCard) {
-        this->gameScene->setTouchEnabled(false);
+        this->boardLayer->setTouchEnabled(false);
         if(lastClickedCard!=targetCard){
             if (lastClickedCard->getPattern()==targetCard->getPattern()) {
                 CCFiniteTimeAction* callSelectorAction = CCCallFunc::actionWithTarget(this,callfunc_selector(board::removeCard));
-                targetCard->getSprite()->runAction(CCSequence:: actions(delayAction,callSelectorAction,NULL));
+                targetCard->getSprite()->runAction(CCSequence::actions(delayAction,callSelectorAction,NULL));
                 
+                //CCDirector::sharedDirector()->getActionManager()->addAction(CCSequence::actions(delayAction,callSelectorAction,NULL), targetCard->getSprite(), true);
             }else{
                 CCCallFunc *callSelectorAction = CCCallFunc::actionWithTarget(this,callfunc_selector(board::renewCard));
                 targetCard->getSprite()->runAction(CCSequence::actions(delayAction,callSelectorAction,NULL));
-                
+                //CCDirector::sharedDirector()->getActionManager()->addAction(CCSequence::actions(delayAction,callSelectorAction,NULL), targetCard->getSprite(), true);
             }
         }else{
             this->setLastClickedCard(targetCard);
-            this->gameScene->setTouchEnabled(true);
+            this->boardLayer->setTouchEnabled(true);
         }
     }else{
         this->setLastClickedCard(targetCard);

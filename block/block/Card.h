@@ -20,6 +20,7 @@ private:
     
 public:
     int index;
+    float position_y;
     Card(CCTexture2D* m_cache[5]);
     void setPattern(int i);
     int getPattern();

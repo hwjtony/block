@@ -31,6 +31,7 @@ public:
     CREATE_FUNC(BoardLayer);
     void ccTouchesEnded(cocos2d::CCSet* touches,cocos2d::CCEvent* event);
     void test();
+    void addRow();
 };
 
 #endif /* defined(__block__BoardLayer__) */
